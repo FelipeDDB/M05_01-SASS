@@ -1,0 +1,116 @@
+@import url("https://fonts.googleapis.com/css?family=Lato:300&display=swap");
+/* general */
+
+// Variables generales
+$fuente: "Lato";
+$alturaStrip: 100vh;
+$colorBasico: white;
+$modo-despliegue: ease-out; 
+// Guardamos en listas de 5 elementos el comportamiento de los strips
+// Colores, animaciones y tiempo, dirección y modo de los despliegues de cada strip
+// Ordenados según: nth-child: 1(IT), 2(A), 3(CA), 4(DE), 5(MY) 
+
+// Colores
+$colores: #244F75,#60BFBF, #8C4B7E, #F8BB44, #F24B4B;
+// Tiempos despliegue de cada strip
+$duraciones: 0.5s, 0.8s, 0.7s, 1s, 1.1s;
+// Lista de animaciones
+$animaciones: strip--u4rx9pe, strip--u4rx9pg, strip--u4rx9q8, strip--u4rx9qn, strip--u4rx9r0;
+// Dirección del despliegue
+$izda-dcha: translate3d(-100%, 0, 0);
+$abajo-arriba: translate3d(0, 100%, 0);
+$arriba-abajo: translate3d(0, -100%, 0);
+$dcha-izda: translate3d(100%, 0, 0);
+$direcciones: $izda-dcha, $abajo-arriba, $arriba-abajo, $abajo-arriba, $dcha-izda;
+
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 10px 0 0 0;
+}
+
+h1 {
+  font-size: 3.5vw;
+  font-weight: 300;
+  color: $colorBasico;
+  font-family: $fuente;
+}
+
+/* strips */
+
+// definición que se utilizará en los contenedores flex
+@mixin stripContainerFlex {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  text-align: center;
+  height: $alturaStrip;
+}
+
+.strips {
+  @include stripContainerFlex;
+  width: 100vw;
+  cursor: pointer;
+}
+.strips .strip {
+  @include stripContainerFlex;
+  position: relative;
+  width: 19.9vw;
+  margin: 0.1vw;
+}
+.strips .strip .strip_content {
+  @include stripContainerFlex;
+  position: absolute;
+  width: 100%;
+}
+
+/* before */
+.strips .strip_content:before {
+  @include stripContainerFlex;
+  content: "";
+  position: absolute;
+  z-index: 1;
+  top: 0;
+  left: 0;
+  width: 20vw;
+  background: $colorBasico;
+  opacity: 0.05;
+  -webkit-transform-origin: center center;
+  transform-origin: center center;
+  -webkit-transform: skew(30deg) scaleY(1) translate(0, 0);
+  transform: skew(30deg) scaleY(1) translate(0, 0);
+  transition: all 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+}
+.strips .strip_content:hover:before {
+  -webkit-transform: skew(0deg) scaleX(2) translate(0, 0);
+  transform: skew(0deg) scaleX(2) translate(0, 0);
+  opacity: 0.2;
+}
+
+
+// mixin que se ejecutará al pintar los stripe
+@mixin pintaStripe($colorStripe, $nombre-animacion, $duracion, $modo-despliegue) {
+  background-color: $colorStripe;
+  animation-name: $nombre-animacion;
+  animation-duration: $duracion;
+  animation-timing-function: $modo-despliegue;
+}
+
+/* strips 1-5: nth-child 1-5 */
+// aplicamos los valores de las listas de colores, animaciones y tiempo, dirección y modo de los despliegues de cada strip
+@for $i from 1 through 5 {
+  .strip:nth-child(#{$i}) .strip_content {
+    @include pintaStripe(nth($colores,$i), nth($animaciones,$i), nth($duraciones,$i), $modo-despliegue);
+  }  
+
+  @keyframes #{nth($animaciones,$i)} {
+    from {
+      transform: #{nth($direcciones,$i)};
+    }
+  }
+  
+}
